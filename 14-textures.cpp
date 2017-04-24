@@ -476,10 +476,10 @@ int main(int argc, char* argv[])
     ////////////////////////////////////////////////////////////////////////
 
     // create a mesh
-    object1 = new cMesh();
+    object1 = new cMultiMesh();
 
     // create plane
-    cCreatePlane(object1, 0.3, 0.3);
+    //cCreatePlane(object1, 0.3, 0.3);
 
     // create collision detector
     object1->createAABBCollisionDetector(toolRadius);
@@ -491,36 +491,38 @@ int main(int argc, char* argv[])
     object1->setLocalPos(0.2, -0.2, 0.0);
 
     // set graphic properties
-    object1->m_texture = cTexture2d::create();
-    fileload = object1->m_texture->loadFromFile(RESOURCE_PATH("../resources/images/whitefoam.jpg"));
+    //object1->m_texture = cTexture2d::create();
+    fileload = object1->loadFromFile("KTH-map-small.obj");
     if (!fileload)
     {
             #if defined(_MSVC)
-            fileload = object1->m_texture->loadFromFile("../../../bin/resources/images/whitefoam.jpg");
+            fileload = object1->loadFromFile("KTH-map-small.obj");
             #endif
     }
     if (!fileload)
     {
-            cout << "Error - Texture image failed to load correctly." << endl;
+            cout << "Error -  image failed to load correctly." << endl;
             close();
             return (-1);
     }
 
+
+
     // enable texture mapping
-    object1->setUseTexture(true);
-    object1->m_material->setWhite();
+    //object1->setUseTexture(true);
+   // object1->m_material->setWhite();
 
     // create normal map from texture data
-    cNormalMapPtr normalMap1 = cNormalMap::create();
-    normalMap1->createMap(object1->m_texture);
-    object1->m_normalMap = normalMap1;
+    //cNormalMapPtr normalMap1 = cNormalMap::create();
+    //normalMap1->createMap(object1->m_texture);
+    //object1->m_normalMap = normalMap1;
 
     // set haptic properties
-    object1->m_material->setStiffness(0.1 * maxStiffness);
-    object1->m_material->setStaticFriction(0.0);
-    object1->m_material->setDynamicFriction(0.3);
-    object1->m_material->setTextureLevel(1.5);
-    object1->m_material->setHapticTriangleSides(true, false);
+    object1->setStiffness(0.1 * maxStiffness);
+    object1->setStaticFriction(0.0);
+    object1->setDynamicFriction(0.3);
+    //object1->m_material->setTextureLevel(1.5);
+   // object1->m_material->setHapticTriangleSides(true, false);
 
 
     /////////////////////////////////////////////////////////////////////////
