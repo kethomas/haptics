@@ -387,11 +387,11 @@ int main(int argc, char* argv[])
 
     // set graphic properties
     bool fileload;
-    fileload = object->loadFromFile("image_objects/kth_campus.obj");
+    fileload = object->loadFromFile("image_objects/kth_campus_small_fliptest.obj");
     if (!fileload)
     {
         #if defined(_MSVC)
-        fileload = object->loadFromFile("image_objects/kth_campus.obj");
+        fileload = object->loadFromFile("image_objects/kth_campus_small_fliptest.obj");
         #endif
     }
     if (!fileload)
@@ -433,9 +433,14 @@ int main(int argc, char* argv[])
 
     // set haptic properties
     object->setStiffness(0.1 * maxStiffness);
+
+
     // object->setStaticFriction(0.0);
     // object->setDynamicFriction(0.3);
-
+    // display options
+        object->setShowTriangles(showTriangles);
+        object->setShowEdges(showEdges);
+        object->setShowNormals(showNormals);
 
     //--------------------------------------------------------------------------
     // WIDGETS
@@ -631,6 +636,11 @@ void updateGraphics(void)
 }
 
 //------------------------------------------------------------------------------
+enum cMode
+{
+    IDLE,
+    SELECTION
+};
 
 void updateHaptics(void)
 {
