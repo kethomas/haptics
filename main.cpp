@@ -81,7 +81,7 @@ cWorld* world;
 cCamera* camera;
 
 // a light source to illuminate the objects in the world
-cSpotLight *light;
+cDirectionalLight *light;
 
 // a haptic device handler
 cHapticDeviceHandler* handler;
@@ -93,7 +93,7 @@ cGenericHapticDevicePtr hapticDevice;
 cToolCursor* tool;
 
 // a few mesh objects
-cMesh* object0;
+cMultiMesh* object;
 cMesh* object1;
 cMesh* object2;
 cMesh* object3;
@@ -289,26 +289,29 @@ int main(int argc, char* argv[])
     world->addChild(camera);
 
     // position and orient the camera
-    camera->set(cVector3d(0.0, 0.0, 1.0),    // camera position (eye)
+    camera->set(cVector3d(0.4, 0.0, 0.2),    // camera position (eye)
                 cVector3d(0.0, 0.0, 0.0),    // lookat position (target)
-                cVector3d(0.0, 1.0, 0.0));   // direction of the (up) vector
+                cVector3d(0.0, 0.0, 1.0));   // direction of the (up) vector
 
     // set the near and far clipping planes of the camera
     // anything in front or behind these clipping planes will not be rendered
-    camera->setClippingPlanes(0.01, 10.0);
+    camera->setClippingPlanes(0.01, 100);
 
     // set stereo mode
     camera->setStereoMode(stereoMode);
 
     // set stereo eye separation and focal length (applies only if stereo is enabled)
-    camera->setStereoEyeSeparation(0.02);
-    camera->setStereoFocalLength(1.0);
+    camera->setStereoEyeSeparation(0.03);
+    camera->setStereoFocalLength(1.5);
 
     // set vertical mirrored display mode
     camera->setMirrorVertical(mirroredDisplay);
 
+    // enable multi-pass rendering to handle transparent objects
+    camera->setUseMultipassTransparency(true);
+
     // create a light source
-    light = new cSpotLight(world);
+    light = new cDirectionalLight(world);
 
     // attach light to camera
     world->addChild(light);
@@ -316,21 +319,29 @@ int main(int argc, char* argv[])
     // enable light source
     light->setEnabled(true);
 
+    // attach light to camera
+    camera->addChild(light);
+
     // position the light source
-    light->setLocalPos(0.0, 0.0, 0.7);
+    // light->setLocalPos(0.0, 0.0, 0.7);
 
     // define the direction of the light beam
-    light->setDir(0.0, 0.0, -1.0);
+    light->setDir(-3.0,-0.5, 0.0);
 
     // enable this light source to generate shadows
-    light->setShadowMapEnabled(true);
+    // light->setShadowMapEnabled(true);
 
     // set the resolution of the shadow map
-    light->m_shadowMap->setQualityLow();
-    //light->m_shadowMap->setQualityMedium();
+    // light->m_shadowMap->setQualityLow();
+    // light->m_shadowMap->setQualityMedium();
 
     // set light cone half angle
-    light->setCutOffAngleDeg(40);
+    // light->setCutOffAngleDeg(40);
+
+    // set lighting conditions
+    light->m_ambient.set(0.4f, 0.4f, 0.4f);
+    light->m_diffuse.set(0.8f, 0.8f, 0.8f);
+    light->m_specular.set(1.0f, 1.0f, 1.0f);
 
 
     //--------------------------------------------------------------------------
@@ -348,10 +359,10 @@ int main(int argc, char* argv[])
 
     // create a 3D tool and add it to the world
     tool = new cToolCursor(world);
-    camera->addChild(tool);
+    world->addChild(tool);
 
     // position tool in respect to camera
-    tool->setLocalPos(-1.0, 0.0, 0.0);
+    // tool->setLocalPos(-1.0, 0.0, 0.0);
 
     // connect the haptic device to the tool
     tool->setHapticDevice(hapticDevice);
@@ -362,8 +373,14 @@ int main(int argc, char* argv[])
     // define a radius for the tool
     tool->setRadius(toolRadius);
 
+    // create a white cursor
+    tool->m_hapticPoint->m_sphereProxy->m_material->setWhite();
+
     // map the physical workspace of the haptic device to a larger virtual workspace.
-    tool->setWorkspaceRadius(1.0);
+    tool->setWorkspaceRadius(0.1);
+
+    // oriente tool with camera
+    tool->setLocalRot(camera->getLocalRot());
 
     // haptic forces are enabled only if small forces are first sent to the device;
     // this mode avoids the force spike that occurs when the application starts when 
@@ -391,23 +408,24 @@ int main(int argc, char* argv[])
     ////////////////////////////////////////////////////////////////////////
 
     // create a mesh
-    object0 = new cMultiMesh();
+    object = new cMultiMesh();
 
     // create collision detector
-    object0->createAABBCollisionDetector(toolRadius);
+    object->createAABBCollisionDetector(toolRadius);
 
     // add object to world
-    world->addChild(object0);
+    world->addChild(object);
 
     // set the position of the object
-    object0->setLocalPos(0.2, -0.2, 0.0);
+    object->setLocalPos(0.2, -0.2, 0.0);
 
     // set graphic properties
-    fileload = object0->loadFromFile("image_objects/KTH-map-small.obj");
+    bool fileload;
+    fileload = object->loadFromFile("image_objects/kth_campus.obj");
     if (!fileload)
     {
         #if defined(_MSVC)
-        fileload = object0->loadFromFile("image_objects/KTH-map-small.obj");
+        fileload = object->loadFromFile("image_objects/kth_campus.obj");
         #endif
     }
     if (!fileload)
@@ -417,10 +435,27 @@ int main(int argc, char* argv[])
         return (-1);
     }
 
+    // get dimensions of object
+    object->computeBoundaryBox(true);
+    double size = cSub(object->getBoundaryMax(), object->getBoundaryMin()).length();
+
+    // resize object to screen
+//    if (size > 0.001)
+//    {
+//        object->scale(1.0 / size);
+//    }
+
+    cMaterial m;
+    m.setBlueCadet();
+    object->setMaterial(m);
+
+    // center object in scene
+    object->setLocalPos(-1.0 * object->getBoundaryCenter());
+
     // set haptic properties
-    object0->setStiffness(0.1 * maxStiffness);
-    object0->setStaticFriction(0.0);
-    object0->setDynamicFriction(0.3);
+    object->setStiffness(0.1 * maxStiffness);
+    // object->setStaticFriction(0.0);
+    // object->setDynamicFriction(0.3);
 
 
     //--------------------------------------------------------------------------
