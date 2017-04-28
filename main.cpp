@@ -335,6 +335,9 @@ int main(int argc, char* argv[])
     // connect the haptic device to the tool
     tool->setHapticDevice(hapticDevice);
 
+    // if the haptic device has a gripper, enable it as a user switch
+    hapticDevice->setEnableGripperUserSwitch(true);
+
     // set radius of tool
     double toolRadius = 0.01;
 
