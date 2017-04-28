@@ -289,9 +289,6 @@ int main(int argc, char* argv[])
     // create a light source
     light = new cDirectionalLight(world);
 
-    // attach light to camera
-    world->addChild(light);
-
     // enable light source
     light->setEnabled(true);
 
@@ -387,11 +384,11 @@ int main(int argc, char* argv[])
 
     // set graphic properties
     bool fileload;
-    fileload = object->loadFromFile("image_objects/kth_campus_small_fliptest.obj");
+    fileload = object->loadFromFile("image_objects/kth_small_correct.obj");
     if (!fileload)
     {
         #if defined(_MSVC)
-        fileload = object->loadFromFile("image_objects/kth_campus_small_fliptest.obj");
+        fileload = object->loadFromFile("image_objects/kth_small_correct.obj");
         #endif
     }
     if (!fileload)
@@ -403,7 +400,7 @@ int main(int argc, char* argv[])
 
     // set material of object
     cMaterial m;
-    m.setBlueCadet();
+    m.setBlueLight();
     object->setMaterial(m);
 
     // disable culling so that faces are rendered on both sides
@@ -432,15 +429,12 @@ int main(int argc, char* argv[])
     object->setNormalsProperties(0.01, colorNormals);
 
     // set haptic properties
-    object->setStiffness(0.1 * maxStiffness);
+    object->setStiffness(2.0 * maxStiffness);
 
-
-    // object->setStaticFriction(0.0);
-    // object->setDynamicFriction(0.3);
     // display options
-        object->setShowTriangles(showTriangles);
-        object->setShowEdges(showEdges);
-        object->setShowNormals(showNormals);
+    object->setShowTriangles(showTriangles);
+    object->setShowEdges(showEdges);
+    object->setShowNormals(showNormals);
 
     //--------------------------------------------------------------------------
     // WIDGETS
