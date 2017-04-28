@@ -2,7 +2,7 @@
  *
  *    DH2660 Haptic Programming Spring 2017
  *    HapMap - Group 5 (Thea, Linnéa, Kirsten)
- *    Code based on Chai3D Example 14
+ *    Code based on Chai3D Examples 14, 21
  *
  *    Distribution license: BSD (e.g. free to use for
  *    most purposes, see end of file)
@@ -80,6 +80,14 @@ bool simulationRunning = false;
 
 // a flag that indicates if the haptic simulation has terminated
 bool simulationFinished = true;
+
+// display options
+bool showEdges = true;
+bool showTriangles = true;
+bool showNormals = false;
+
+// display level for collision tree
+int collisionTreeDisplayLevel = 0;
 
 // a frequency counter to measure the simulation graphic rate
 cFrequencyCounter freqCounterGraphics;
@@ -205,7 +213,7 @@ int main(int argc, char* argv[])
     }
 
     // create display context
-    window = glfwCreateWindow(w, h, "CHAI3D", NULL, NULL);
+    window = glfwCreateWindow(w, h, "HapMap", NULL, NULL);
     if (!window)
     {
         cout << "failed to create window" << endl;
@@ -290,21 +298,8 @@ int main(int argc, char* argv[])
     // attach light to camera
     camera->addChild(light);
 
-    // position the light source
-    // light->setLocalPos(0.0, 0.0, 0.7);
-
     // define the direction of the light beam
     light->setDir(-3.0,-0.5, 0.0);
-
-    // enable this light source to generate shadows
-    // light->setShadowMapEnabled(true);
-
-    // set the resolution of the shadow map
-    // light->m_shadowMap->setQualityLow();
-    // light->m_shadowMap->setQualityMedium();
-
-    // set light cone half angle
-    // light->setCutOffAngleDeg(40);
 
     // set lighting conditions
     light->m_ambient.set(0.4f, 0.4f, 0.4f);
@@ -329,9 +324,6 @@ int main(int argc, char* argv[])
     tool = new cToolCursor(world);
     world->addChild(tool);
 
-    // position tool in respect to camera
-    // tool->setLocalPos(-1.0, 0.0, 0.0);
-
     // connect the haptic device to the tool
     tool->setHapticDevice(hapticDevice);
 
@@ -343,6 +335,9 @@ int main(int argc, char* argv[])
 
     // define a radius for the tool
     tool->setRadius(toolRadius);
+
+    // hide the device sphere. only show proxy.
+    tool->setShowContactPoints(true, false);
 
     // create a white cursor
     tool->m_hapticPoint->m_sphereProxy->m_material->setWhite();
@@ -411,8 +406,30 @@ int main(int argc, char* argv[])
     m.setBlueCadet();
     object->setMaterial(m);
 
+    // disable culling so that faces are rendered on both sides
+    object->setUseCulling(false);
+
+    // compute a boundary box
+    object->computeBoundaryBox(true);
+
+    // show/hide boundary box
+    object->setShowBoundaryBox(false);
+
     // center object in scene
     object->setLocalPos(-1.0 * object->getBoundaryCenter());
+
+    // compute all edges of object for which adjacent triangles have more than 40 degree angle
+    object->computeAllEdges(0);
+
+    // set line width of edges and color
+    cColorf colorEdges;
+    colorEdges.setBlack();
+    object->setEdgeProperties(1, colorEdges);
+
+    // set normal properties for display
+    cColorf colorNormals;
+    colorNormals.setOrangeTomato();
+    object->setNormalsProperties(0.01, colorNormals);
 
     // set haptic properties
     object->setStiffness(0.1 * maxStiffness);
@@ -429,6 +446,7 @@ int main(int argc, char* argv[])
     
     // create a label to display the haptic and graphic rate of the simulation
     labelRates = new cLabel(font);
+    labelRates->m_fontColor.setBlack();
     camera->m_frontLayer->addChild(labelRates);
 
     // create a background
@@ -616,6 +634,10 @@ void updateGraphics(void)
 
 void updateHaptics(void)
 {
+    cMode state = IDLE;
+    cGenericObject* selectedObject = NULL;
+    cTransform tool_T_object;
+
     // simulation in now running
     simulationRunning  = true;
     simulationFinished = false;
@@ -623,6 +645,13 @@ void updateHaptics(void)
     // main haptic simulation loop
     while(simulationRunning)
     {
+        /////////////////////////////////////////////////////////////////////////
+        // HAPTIC RENDERING
+        /////////////////////////////////////////////////////////////////////////
+
+        // signal frequency counter
+        freqCounterHaptics.signal(1);
+
         // compute global reference frames for each object
         world->computeGlobalPositions(true);
 
@@ -632,11 +661,91 @@ void updateHaptics(void)
         // compute interaction forces
         tool->computeInteractionForces();
 
+
+        /////////////////////////////////////////////////////////////////////////
+        // MANIPULATION
+        /////////////////////////////////////////////////////////////////////////
+
+        // compute transformation from world to tool (haptic device)
+        cTransform world_T_tool = tool->getDeviceGlobalTransform();
+
+        // get status of user switch
+        bool button = tool->getUserSwitch(0);
+
+        //
+        // STATE 1:
+        // Idle mode - user presses the user switch
+        //
+        if ((state == IDLE) && (button == true))
+        {
+            // check if at least one contact has occurred
+            if (tool->m_hapticPoint->getNumCollisionEvents() > 0)
+            {
+                // get contact event
+                cCollisionEvent* collisionEvent = tool->m_hapticPoint->getCollisionEvent(0);
+
+                // get object from contact event
+                selectedObject = collisionEvent->m_object;
+            }
+            else
+            {
+                selectedObject = object;
+            }
+
+            // get transformation from object
+            cTransform world_T_object = selectedObject->getGlobalTransform();
+
+            // compute inverse transformation from contact point to object
+            cTransform tool_T_world = world_T_tool;
+            tool_T_world.invert();
+
+            // store current transformation tool
+            tool_T_object = tool_T_world * world_T_object;
+
+            // update state
+            state = SELECTION;
+        }
+
+
+        //
+        // STATE 2:
+        // Selection mode - operator maintains user switch enabled and moves object
+        //
+        else if ((state == SELECTION) && (button == true))
+        {
+            // compute new transformation of object in global coordinates
+            cTransform world_T_object = world_T_tool * tool_T_object;
+
+            // compute new transformation of object in local coordinates
+            cTransform parent_T_world = selectedObject->getParent()->getLocalTransform();
+            parent_T_world.invert();
+            cTransform parent_T_object = parent_T_world * world_T_object;
+
+            // assign new local transformation to object
+            selectedObject->setLocalTransform(parent_T_object);
+
+            // set zero forces when manipulating objects
+            tool->setDeviceGlobalForce(0.0, 0.0, 0.0);
+
+            tool->initialize();
+        }
+
+        //
+        // STATE 3:
+        // Finalize Selection mode - operator releases user switch.
+        //
+        else
+        {
+            state = IDLE;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////
+        // FINALIZE
+        /////////////////////////////////////////////////////////////////////////
+
         // send forces to haptic device
         tool->applyToDevice();
-
-        // signal frequency counter
-        freqCounterHaptics.signal(1);
     }
     
     // exit haptics thread
