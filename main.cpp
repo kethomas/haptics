@@ -293,6 +293,7 @@ int main(int argc, char* argv[])
     light->setEnabled(true);
 
     // attach light to camera
+    world->addChild(light);
     camera->addChild(light);
 
     // define the direction of the light beam
@@ -384,11 +385,11 @@ int main(int argc, char* argv[])
 
     // set graphic properties
     bool fileload;
-    fileload = object->loadFromFile("image_objects/kth_small_correct.obj");
+    fileload = object->loadFromFile("image_objects/kth_test.obj");
     if (!fileload)
     {
         #if defined(_MSVC)
-        fileload = object->loadFromFile("image_objects/kth_small_correct.obj");
+        fileload = object->loadFromFile("image_objects/kth_test.obj");
         #endif
     }
     if (!fileload)
