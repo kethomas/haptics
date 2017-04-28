@@ -403,11 +403,11 @@ int main(int argc, char* argv[])
     object0->setLocalPos(0.2, -0.2, 0.0);
 
     // set graphic properties
-    fileload = object0->loadFromFile("KTH-map-small.obj");
+    fileload = object0->loadFromFile("image_objects/KTH-map-small.obj");
     if (!fileload)
     {
         #if defined(_MSVC)
-        fileload = object0->loadFromFile("KTH-map-small.obj");
+        fileload = object0->loadFromFile("image_objects/KTH-map-small.obj");
         #endif
     }
     if (!fileload)
