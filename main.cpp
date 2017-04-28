@@ -385,11 +385,11 @@ int main(int argc, char* argv[])
 
     // set graphic properties
     bool fileload;
-    fileload = object->loadFromFile("image_objects/kth_test.obj");
+    fileload = object->loadFromFile("image_objects/kth_campus_insideout.obj");
     if (!fileload)
     {
         #if defined(_MSVC)
-        fileload = object->loadFromFile("image_objects/kth_test.obj");
+        fileload = object->loadFromFile("image_objects/kth_campus_insideout.obj");
         #endif
     }
     if (!fileload)
@@ -401,7 +401,7 @@ int main(int argc, char* argv[])
 
     // set material of object
     cMaterial m;
-    m.setBlueLight();
+    m.setBlueCadet();
     object->setMaterial(m);
 
     // disable culling so that faces are rendered on both sides
