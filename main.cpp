@@ -329,7 +329,7 @@ int main(int argc, char* argv[])
     hapticDevice->setEnableGripperUserSwitch(true);
 
     // set radius of tool
-    double toolRadius = 0.01;
+    double toolRadius = 0.005;
 
     // define a radius for the tool
     tool->setRadius(toolRadius);
@@ -374,9 +374,6 @@ int main(int argc, char* argv[])
     // create a multimesh
     object = new cMultiMesh();
 
-    // create collision detector
-    object->createAABBCollisionDetector(toolRadius);
-
     // add object to world
     world->addChild(object);
 
@@ -412,6 +409,9 @@ int main(int argc, char* argv[])
 
     // show/hide boundary box
     object->setShowBoundaryBox(false);
+
+    // create collision detector
+    object->createAABBCollisionDetector(toolRadius);
 
     // center object in scene
     object->setLocalPos(-1.0 * object->getBoundaryCenter());
