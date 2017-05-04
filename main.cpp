@@ -265,7 +265,7 @@ int main(int argc, char* argv[])
     world->addChild(camera);
 
     // position and orient the camera
-    camera->set(cVector3d(0.4, 0.0, 0.2),    // camera position (eye)
+    camera->set(cVector3d(0.5, 0.0, 1.0),    // camera position (eye)
                 cVector3d(0.0, 0.0, 0.0),    // lookat position (target)
                 cVector3d(0.0, 0.0, 1.0));   // direction of the (up) vector
 
@@ -300,7 +300,7 @@ int main(int argc, char* argv[])
     light->setDir(-3.0,-0.5, 0.0);
 
     // set lighting conditions
-    light->m_ambient.set(0.4f, 0.4f, 0.4f);
+    light->m_ambient.set(1.0f, 1.0f, 1.0f);
     light->m_diffuse.set(0.8f, 0.8f, 0.8f);
     light->m_specular.set(1.0f, 1.0f, 1.0f);
 
@@ -338,7 +338,7 @@ int main(int argc, char* argv[])
     tool->setShowContactPoints(true, false);
 
     // create a white cursor
-    tool->m_hapticPoint->m_sphereProxy->m_material->setWhite();
+    tool->m_hapticPoint->m_sphereProxy->m_material->setBlue();
 
     // map the physical workspace of the haptic device to a larger virtual workspace.
     tool->setWorkspaceRadius(0.1);
@@ -382,11 +382,11 @@ int main(int argc, char* argv[])
 
     // set graphic properties
     bool fileload;
-    fileload = object->loadFromFile("image_objects/kth_campus_insideout.obj");
+    fileload = object->loadFromFile("image_objects/kth_campus2.obj");
     if (!fileload)
     {
         #if defined(_MSVC)
-        fileload = object->loadFromFile("image_objects/kth_campus_insideout.obj");
+        fileload = object->loadFromFile("image_objects/kth_campus.3ds");
         #endif
     }
     if (!fileload)
@@ -398,7 +398,7 @@ int main(int argc, char* argv[])
 
     // set material of object
     cMaterial m;
-    m.setBlueCadet();
+    m.setWhite();
     object->setMaterial(m);
 
     // disable culling so that faces are rendered on both sides
@@ -667,6 +667,7 @@ void updateHaptics(void)
         tool->computeInteractionForces();
 
 
+        /*
         /////////////////////////////////////////////////////////////////////////
         // MANIPULATION
         /////////////////////////////////////////////////////////////////////////
@@ -743,6 +744,7 @@ void updateHaptics(void)
         {
             state = IDLE;
         }
+        */
 
 
         /////////////////////////////////////////////////////////////////////////
