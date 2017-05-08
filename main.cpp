@@ -265,7 +265,7 @@ int main(int argc, char* argv[])
     world->addChild(camera);
 
     // position and orient the camera
-    camera->set(cVector3d(0.5, 0.0, 1.0),    // camera position (eye)
+    camera->set(cVector3d(0.5, 0.0, 0.75),    // camera position (eye)
                 cVector3d(0.0, 0.0, 0.0),    // lookat position (target)
                 cVector3d(0.0, 0.0, 1.0));   // direction of the (up) vector
 
@@ -398,7 +398,7 @@ int main(int argc, char* argv[])
 
     // set material of object
     cMaterial m;
-    m.setWhite();
+    m.setBlueCadet();
     object->setMaterial(m);
 
     // disable culling so that faces are rendered on both sides
@@ -430,7 +430,8 @@ int main(int argc, char* argv[])
     object->setNormalsProperties(0.01, colorNormals);
 
     // set haptic properties
-    object->setStiffness(2.0 * maxStiffness);
+    object->setStiffness(1.0 * maxStiffness);
+    // can add friction and texture
 
     // display options
     object->setShowTriangles(showTriangles);
@@ -447,7 +448,7 @@ int main(int argc, char* argv[])
     // create a label to display the haptic and graphic rate of the simulation
     labelRates = new cLabel(font);
     labelRates->m_fontColor.setBlack();
-    camera->m_frontLayer->addChild(labelRates);
+    // camera->m_frontLayer->addChild(labelRates);
 
     // create a background
     background = new cBackground();
