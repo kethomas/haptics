@@ -620,8 +620,11 @@ void updateGraphics(void)
     // update position of label
     labelRates->setLocalPos((int)(0.5 * (width - labelRates->getWidth())), 15);
 
+    // cVector3d* pos;
+    // pos = &(tool->m_hapticPoint->getGlobalPosProxy());
+
     buildingLabel->setText("Nymble");
-    buildingLabel->setLocalPos((int)(0.5 * (width - buildingLabel->getWidth())), 5);
+    buildingLabel->setLocalPos(205,215,0);
 
 
     /////////////////////////////////////////////////////////////////////
