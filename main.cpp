@@ -75,6 +75,9 @@ cFontPtr font;
 // a label to display the rate [Hz] at which the simulation is running
 cLabel* labelRates;
 
+// add labels for buildings
+cLabel* buildingLabel;
+
 // a flag that indicates if the haptic simulation is currently running
 bool simulationRunning = false;
 
@@ -450,6 +453,11 @@ int main(int argc, char* argv[])
     labelRates->m_fontColor.setBlack();
     // camera->m_frontLayer->addChild(labelRates);
 
+
+    buildingLabel = new cLabel(font);
+    buildingLabel->m_fontColor.setBlack();
+    camera->m_frontLayer->addChild(buildingLabel);
+
     // create a background
     background = new cBackground();
     camera->m_backLayer->addChild(background);
@@ -611,6 +619,9 @@ void updateGraphics(void)
 
     // update position of label
     labelRates->setLocalPos((int)(0.5 * (width - labelRates->getWidth())), 15);
+
+    buildingLabel->setText("Nymble");
+    buildingLabel->setLocalPos((int)(0.5 * (width - buildingLabel->getWidth())), 5);
 
 
     /////////////////////////////////////////////////////////////////////
