@@ -62,7 +62,7 @@ cToolCursor* tool;
 
 // a few mesh objects
 cMultiMesh* object;
-cMesh* object1;
+cMultiMesh* object1;
 cMesh* object2;
 cMesh* object3;
 
@@ -390,11 +390,11 @@ int main(int argc, char* argv[])
 
     // set graphic properties
     bool fileload;
-    fileload = object->loadFromFile("image_objects/kth_campus_with_arches.obj");
+    fileload = object->loadFromFile("image_objects/kth_campus.obj");
     if (!fileload)
     {
         #if defined(_MSVC)
-        fileload = object->loadFromFile("image_objects/kth_campus.3ds");
+        fileload = object->loadFromFile("image_objects/kth_campus_with_arches.obj");
         #endif
     }
     if (!fileload)
@@ -445,6 +445,79 @@ int main(int argc, char* argv[])
     object->setShowTriangles(showTriangles);
     object->setShowEdges(showEdges);
     object->setShowNormals(showNormals);
+
+    /////////////////////////////////////////////////////////////////////////
+    // OBJECT 1: Plane - Thea, Linnéa, Kirsten
+    ////////////////////////////////////////////////////////////////////////
+
+    // create a multimesh
+    object1 = new cMultiMesh();
+
+    // add object to world
+    world->addChild(object1);
+
+    // set the position of the object
+    object1->setLocalPos(0.5, 1.5, 0.0);
+
+    // set graphic properties
+    // bool fileload;
+    fileload = object1->loadFromFile("image_objects/kth_campus_plane.obj");
+    if (!fileload)
+    {
+        #if defined(_MSVC)
+        fileload = object1->loadFromFile("image_objects/kth_campus_plane.obj");
+        #endif
+    }
+    if (!fileload)
+    {
+        cout << "Error -  image failed to load correctly." << endl;
+        close();
+        return (-1);
+    }
+
+    // set material of object
+    cMaterial p;
+    p.setGray();
+    object1->setMaterial(p);
+
+    // disable culling so that faces are rendered on both sides
+    object1->setUseCulling(false);
+
+    // compute a boundary box
+    object1->computeBoundaryBox(true);
+
+    // show/hide boundary box
+    object1->setShowBoundaryBox(false);
+
+    // create collision detector
+    object1->createAABBCollisionDetector(toolRadius);
+
+    // center object in scene
+    object1->setLocalPos(-1.0 * object->getBoundaryCenter());
+
+    // compute all edges of object for which adjacent triangles have more than 40 degree angle
+    object1->computeAllEdges(0);
+
+    // set line width of edges and color
+//    cColorf colorEdges;
+//    colorEdges.setBlack();
+//    object->setEdgeProperties(1, colorEdges);
+
+    // set normal properties for display
+//    cColorf colorNormals;
+//    colorNormals.setOrangeTomato();
+//    object->setNormalsProperties(0.01, colorNormals);
+
+    // set haptic properties
+    object1->setStiffness(2.0* maxStiffness);
+    object1->setFriction(3.5, 0.0);
+    // can add friction and texture
+
+    // display options
+    object1->setShowTriangles(showTriangles);
+    object1->setShowEdges(false);
+    object1->setShowNormals(false);
+
 
     //--------------------------------------------------------------------------
     // WIDGETS
@@ -655,10 +728,10 @@ void updateGraphics(void)
     buildingLabel2->setLocalPos(400,175,0);
 
     buildingLabel3->setText("D");
-    buildingLabel3->setLocalPos(725,90,0);
+    buildingLabel3->setLocalPos(725,100,0);
 
     buildingLabel4->setText("E");
-    buildingLabel4->setLocalPos(550,125,0);
+    buildingLabel4->setLocalPos(555,135,0);
 
     buildingLabel5->setText("Biblioteket");
     buildingLabel5->setLocalPos(400,410,0);
