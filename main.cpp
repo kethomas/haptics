@@ -386,7 +386,7 @@ int main(int argc, char* argv[])
     world->addChild(object);
 
     // set the position of the object
-    object->setLocalPos(0.2, -0.2, 0.0);
+    object->setLocalPos(0.5, 1.5, 0.0);
 
     // set graphic properties
     bool fileload;
@@ -406,7 +406,7 @@ int main(int argc, char* argv[])
 
     // set material of object
     cMaterial m;
-    m.setBlueCadet();
+    m.setRedDark();
     object->setMaterial(m);
 
     // disable culling so that faces are rendered on both sides
@@ -438,7 +438,7 @@ int main(int argc, char* argv[])
     object->setNormalsProperties(0.01, colorNormals);
 
     // set haptic properties
-    object->setStiffness(1.0 * maxStiffness);
+    object->setStiffness(1.5* maxStiffness);
     // can add friction and texture
 
     // display options
@@ -661,7 +661,7 @@ void updateGraphics(void)
     buildingLabel4->setLocalPos(550,125,0);
 
     buildingLabel5->setText("Biblioteket");
-    buildingLabel5->setLocalPos(200,205,0);
+    buildingLabel5->setLocalPos(400,410,0);
 
     buildingLabel6->setText("Arktektur");
     buildingLabel6->setLocalPos(425,300,0);
