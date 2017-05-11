@@ -77,6 +77,11 @@ cLabel* labelRates;
 
 // add labels for buildings
 cLabel* buildingLabel;
+cLabel* buildingLabel2;
+cLabel* buildingLabel3;
+cLabel* buildingLabel4;
+cLabel* buildingLabel5;
+cLabel* buildingLabel6;
 
 // a flag that indicates if the haptic simulation is currently running
 bool simulationRunning = false;
@@ -268,7 +273,7 @@ int main(int argc, char* argv[])
     world->addChild(camera);
 
     // position and orient the camera
-    camera->set(cVector3d(0.5, 0.0, 0.75),    // camera position (eye)
+    camera->set(cVector3d(0.25, 0.0, 0.5),    // camera position (eye)
                 cVector3d(0.0, 0.0, 0.0),    // lookat position (target)
                 cVector3d(0.0, 0.0, 1.0));   // direction of the (up) vector
 
@@ -385,7 +390,7 @@ int main(int argc, char* argv[])
 
     // set graphic properties
     bool fileload;
-    fileload = object->loadFromFile("image_objects/kth_campus2.obj");
+    fileload = object->loadFromFile("image_objects/kth_campus_with_arches.obj");
     if (!fileload)
     {
         #if defined(_MSVC)
@@ -455,8 +460,28 @@ int main(int argc, char* argv[])
 
 
     buildingLabel = new cLabel(font);
-    buildingLabel->m_fontColor.setBlack();
+    buildingLabel->m_fontColor.setWhite();
     camera->m_frontLayer->addChild(buildingLabel);
+
+    buildingLabel2 = new cLabel(font);
+    buildingLabel2->m_fontColor.setWhite();
+    camera->m_frontLayer->addChild(buildingLabel2);
+
+    buildingLabel3 = new cLabel(font);
+    buildingLabel3->m_fontColor.setWhite();
+    camera->m_frontLayer->addChild(buildingLabel3);
+
+    buildingLabel4 = new cLabel(font);
+    buildingLabel4->m_fontColor.setWhite();
+    camera->m_frontLayer->addChild(buildingLabel4);
+
+    buildingLabel5 = new cLabel(font);
+    buildingLabel5->m_fontColor.setWhite();
+    camera->m_frontLayer->addChild(buildingLabel5);
+
+    buildingLabel6 = new cLabel(font);
+    buildingLabel6->m_fontColor.setWhite();
+    camera->m_frontLayer->addChild(buildingLabel6);
 
     // create a background
     background = new cBackground();
@@ -624,7 +649,22 @@ void updateGraphics(void)
     // pos = &(tool->m_hapticPoint->getGlobalPosProxy());
 
     buildingLabel->setText("Nymble");
-    buildingLabel->setLocalPos(205,215,0);
+    buildingLabel->setLocalPos(200,205,0);
+
+    buildingLabel2->setText("Entre");
+    buildingLabel2->setLocalPos(400,175,0);
+
+    buildingLabel3->setText("D");
+    buildingLabel3->setLocalPos(725,90,0);
+
+    buildingLabel4->setText("E");
+    buildingLabel4->setLocalPos(550,125,0);
+
+    buildingLabel5->setText("Biblioteket");
+    buildingLabel5->setLocalPos(200,205,0);
+
+    buildingLabel6->setText("Arktektur");
+    buildingLabel6->setLocalPos(425,300,0);
 
 
     /////////////////////////////////////////////////////////////////////
