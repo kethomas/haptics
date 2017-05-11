@@ -1,0 +1,12 @@
+# Blender v2.78 (sub 0) OBJ File: 'kth_campus_plane.blend'
+# www.blender.org
+mtllib kth_campus_plane.mtl
+o Plane_Plane.001
+v -172.724869 0.000000 194.205948
+v 156.903793 0.000000 194.205948
+v -172.724869 0.000000 -245.791351
+v 156.903793 0.000000 -245.791351
+vn 0.0000 1.0000 0.0000
+usemtl None
+s off
+f 1//1 2//1 4//1 3//1
