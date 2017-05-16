@@ -273,7 +273,7 @@ int main(int argc, char* argv[])
     world->addChild(camera);
 
     // position and orient the camera
-    camera->set(cVector3d(0.25, 0.0, 0.5),    // camera position (eye)
+    camera->set(cVector3d(0.7, 0.0, 0.2),    // camera position (eye)
                 cVector3d(0.0, 0.0, 0.0),    // lookat position (target)
                 cVector3d(0.0, 0.0, 1.0));   // direction of the (up) vector
 
@@ -386,7 +386,7 @@ int main(int argc, char* argv[])
     world->addChild(object);
 
     // set the position of the object
-    object->setLocalPos(0.5, 1.5, 0.0);
+    object->setLocalPos(0, 0, 0.0);
 
     // set graphic properties
     bool fileload;
@@ -457,7 +457,7 @@ int main(int argc, char* argv[])
     world->addChild(object1);
 
     // set the position of the object
-    object1->setLocalPos(0.5, 1.5, 0.0);
+    object1->setLocalPos(0, 0, 0.0);
 
     // set graphic properties
     // bool fileload;
@@ -534,27 +534,27 @@ int main(int argc, char* argv[])
 
     buildingLabel = new cLabel(font);
     buildingLabel->m_fontColor.setWhite();
-    camera->m_frontLayer->addChild(buildingLabel);
+    // camera->m_frontLayer->addChild(buildingLabel);
 
     buildingLabel2 = new cLabel(font);
     buildingLabel2->m_fontColor.setWhite();
-    camera->m_frontLayer->addChild(buildingLabel2);
+    // camera->m_frontLayer->addChild(buildingLabel2);
 
     buildingLabel3 = new cLabel(font);
     buildingLabel3->m_fontColor.setWhite();
-    camera->m_frontLayer->addChild(buildingLabel3);
+    // camera->m_frontLayer->addChild(buildingLabel3);
 
     buildingLabel4 = new cLabel(font);
     buildingLabel4->m_fontColor.setWhite();
-    camera->m_frontLayer->addChild(buildingLabel4);
+    // camera->m_frontLayer->addChild(buildingLabel4);
 
     buildingLabel5 = new cLabel(font);
     buildingLabel5->m_fontColor.setWhite();
-    camera->m_frontLayer->addChild(buildingLabel5);
+    // camera->m_frontLayer->addChild(buildingLabel5);
 
     buildingLabel6 = new cLabel(font);
     buildingLabel6->m_fontColor.setWhite();
-    camera->m_frontLayer->addChild(buildingLabel6);
+    // camera->m_frontLayer->addChild(buildingLabel6);
 
     // create a background
     background = new cBackground();
