@@ -349,7 +349,7 @@ int main(int argc, char* argv[])
     tool->m_hapticPoint->m_sphereProxy->m_material->setBlue();
 
     // map the physical workspace of the haptic device to a larger virtual workspace.
-    tool->setWorkspaceRadius(0.1);
+    tool->setWorkspaceRadius(0.25);
 
     // oriente tool with camera
     tool->setLocalRot(camera->getLocalRot());
@@ -369,10 +369,10 @@ int main(int argc, char* argv[])
 
     // read the scale factor between the physical workspace of the haptic
     // device and the virtual workspace defined for the tool
-    double workspaceScaleFactor = tool->getWorkspaceScaleFactor();
+    //double workspaceScaleFactor = tool->getWorkspaceScaleFactor();
 
     // properties
-    double maxStiffness = hapticDeviceInfo.m_maxLinearStiffness / workspaceScaleFactor;
+    double maxStiffness = hapticDeviceInfo.m_maxLinearStiffness;// / workspaceScaleFactor;
 
 
     /////////////////////////////////////////////////////////////////////////
@@ -386,7 +386,7 @@ int main(int argc, char* argv[])
     world->addChild(object);
 
     // set the position of the object
-    object->setLocalPos(0, 0, 0.0);
+    object->setLocalPos(0, 0, 0);
 
     // set graphic properties
     bool fileload;
@@ -406,7 +406,7 @@ int main(int argc, char* argv[])
 
     // set material of object
     cMaterial m;
-    m.setRedDark();
+    m.setWhite();
     object->setMaterial(m);
 
     // disable culling so that faces are rendered on both sides
@@ -423,6 +423,9 @@ int main(int argc, char* argv[])
 
     // center object in scene
     object->setLocalPos(-1.0 * object->getBoundaryCenter());
+    std::cout <<"Position: "<< object->getLocalPos() << std::endl;
+    object->setLocalPos(0, 0, 0.05);
+
 
     // compute all edges of object for which adjacent triangles have more than 40 degree angle
     object->computeAllEdges(0);
@@ -438,7 +441,7 @@ int main(int argc, char* argv[])
     object->setNormalsProperties(0.01, colorNormals);
 
     // set haptic properties
-    object->setStiffness(1.5* maxStiffness);
+    object->setStiffness(0.9*maxStiffness);
     // can add friction and texture
 
     // display options
@@ -457,7 +460,7 @@ int main(int argc, char* argv[])
     world->addChild(object1);
 
     // set the position of the object
-    object1->setLocalPos(0, 0, 0.0);
+    object1->setLocalPos(0, 0, 0.05);
 
     // set graphic properties
     // bool fileload;
@@ -493,7 +496,7 @@ int main(int argc, char* argv[])
     object1->createAABBCollisionDetector(toolRadius);
 
     // center object in scene
-    object1->setLocalPos(-1.0 * object->getBoundaryCenter());
+    //object1->setLocalPos(-1.0 * object->getBoundaryCenter());
 
     // compute all edges of object for which adjacent triangles have more than 40 degree angle
     object1->computeAllEdges(0);
@@ -509,7 +512,7 @@ int main(int argc, char* argv[])
 //    object->setNormalsProperties(0.01, colorNormals);
 
     // set haptic properties
-    object1->setStiffness(2.0* maxStiffness);
+    object1->setStiffness(0.9* maxStiffness);
     object1->setFriction(3.5, 0.0);
     // can add friction and texture
 
@@ -880,7 +883,11 @@ void updateHaptics(void)
         /////////////////////////////////////////////////////////////////////////
 
         // send forces to haptic device
-        tool->applyToDevice();
+        //tool->applyToDevice();
+        cVector3d computedForce = tool->getDeviceGlobalForce();
+        computedForce += cVector3d(0,0,-3.0);
+        hapticDevice->setForce(computedForce);
+
     }
     
     // exit haptics thread
