@@ -522,6 +522,57 @@ int main(int argc, char* argv[])
     object1->setShowNormals(false);
 
 
+    /////////////////////////////////////////////////////////////////////////
+    // OBJECT 2: Grass Texture - Thea, Linnéa, Kirsten
+    ////////////////////////////////////////////////////////////////////////
+
+    // create a mesh
+    object2 = new cMesh();
+
+    // create plane
+    cCreatePlane(object2, 0.1, 0.1);
+
+    // create collision detector
+    object2->createAABBCollisionDetector(toolRadius);
+
+    // add object to world
+    world->addChild(object2);
+
+    // set the position of the object
+    object2->setLocalPos(0.2, 0.2, 0.0);
+
+    // set graphic properties
+    object2->m_texture = cTexture2d::create();
+    fileload = object2->m_texture->loadFromFile(RESOURCE_PATH("image_objects/grass.jpg"));
+    if (!fileload)
+    {
+        #if defined(_MSVC)
+        fileload = object2->m_texture->loadFromFile("image_objects/grass.jpg");
+        #endif
+    }
+    if (!fileload)
+    {
+        cout << "Error - Texture image failed to load correctly." << endl;
+        close();
+        return (-1);
+    }
+
+    // enable texture mapping
+    object2->setUseTexture(true);
+    object2->m_material->setWhite();
+
+    // create normal map from texture data
+    cNormalMapPtr normalMap2 = cNormalMap::create();
+    normalMap2->createMap(object2->m_texture);
+    object2->m_normalMap = normalMap2;
+
+    // set haptic properties
+    object2->m_material->setStiffness(0.4 * maxStiffness);
+    object2->m_material->setStaticFriction(0.2);
+    object2->m_material->setDynamicFriction(0.2);
+    object2->m_material->setTextureLevel(0.2);
+    object2->m_material->setHapticTriangleSides(true, false);
+
     //--------------------------------------------------------------------------
     // WIDGETS
     //--------------------------------------------------------------------------
