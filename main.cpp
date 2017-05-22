@@ -273,7 +273,7 @@ int main(int argc, char* argv[])
     world->addChild(camera);
 
     // position and orient the camera
-    camera->set(cVector3d(0.7, 0.0, 0.2),    // camera position (eye)
+    camera->set(cVector3d(0.7, 0.0, 0.2),    // SET Z TO 0.2!!!! camera position (eye)
                 cVector3d(0.0, 0.0, 0.0),    // lookat position (target)
                 cVector3d(0.0, 0.0, 1.0));   // direction of the (up) vector
 
@@ -408,6 +408,7 @@ int main(int argc, char* argv[])
     cMaterial m;
     m.setWhite();
     object->setMaterial(m);
+    //object->setTransparencyLevel(0.1);
 
     // disable culling so that faces are rendered on both sides
     object->setUseCulling(false);
@@ -530,7 +531,7 @@ int main(int argc, char* argv[])
     object2 = new cMesh();
 
     // create plane
-    cCreatePlane(object2, 0.1, 0.1);
+    cCreatePlane(object2, 0.19, 0.14);
 
     // create collision detector
     object2->createAABBCollisionDetector(toolRadius);
@@ -539,11 +540,13 @@ int main(int argc, char* argv[])
     world->addChild(object2);
 
     // set the position of the object
-    object2->setLocalPos(0.2, 0.2, 0.0);
+    object2->setLocalPos(-0.07, 0.15, 0.0501);
+
+    object2->rotateAboutLocalAxisDeg (0,0,1,-20);
 
     // set graphic properties
     object2->m_texture = cTexture2d::create();
-    fileload = object2->m_texture->loadFromFile(RESOURCE_PATH("image_objects/grass.jpg"));
+    fileload = object2->m_texture->loadFromFile("image_objects/grass.jpg");
     if (!fileload)
     {
         #if defined(_MSVC)
