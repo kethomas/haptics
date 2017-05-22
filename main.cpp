@@ -62,7 +62,7 @@ cToolCursor* tool;
 
 // a few mesh objects
 cMultiMesh* object;
-cMesh* object1;
+cMultiMesh* object1;
 cMesh* object2;
 cMesh* object3;
 
@@ -455,13 +455,12 @@ int main(int argc, char* argv[])
     ////////////////////////////////////////////////////////////////////////
 
     // create a multimesh
-    object1 = new cMesh();
+    object1 = new cMultiMesh();
 
     // create plane
-    cCreatePlane(object1, 1.0, 1.0);
+    // cCreatePlane(object1, 1.0, 1.0);
 
-    // create collision detector
-    object1->createAABBCollisionDetector(toolRadius);
+
 
     // add object to world
     world->addChild(object1);
@@ -471,12 +470,12 @@ int main(int argc, char* argv[])
 
     // set graphic properties
     // bool fileload;
-    object1->m_texture = cTexture2d::create();
-    fileload = object1->loadFromFile("image_objects/blackstone.jpg");
+    // object1->m_texture = cTexture2d::create();
+    fileload = object1->loadFromFile("image_objects/kth_campus_plane.obj");
     if (!fileload)
     {
         #if defined(_MSVC)
-        fileload = object1->loadFromFile("image_objects/blackstone.jpg");
+        fileload = object1->m_texture->loadFromFile("image_objects/sand.jpg");
         #endif
     }
     if (!fileload)
@@ -486,64 +485,67 @@ int main(int argc, char* argv[])
         return (-1);
     }
 
-    // enable texture mapping
-    object1->setUseTexture(true);
-    object1->m_material->setWhite();
+    // create collision detector
+    object1->createAABBCollisionDetector(toolRadius);
 
-    // create normal map from texture data
-    cNormalMapPtr normalMap1 = cNormalMap::create();
-    normalMap1->createMap(object1->m_texture);
-    object1->m_normalMap = normalMap1;
-    normalMap1->setTextureUnit(GL_TEXTURE0_ARB);
+//    // enable texture mapping
+//    object1->setUseTexture(false);
+//    object1->m_material->setGray();
 
-    // set haptic properties
-    object1->m_material->setStiffness(0.5 * maxStiffness);
-    object1->m_material->setStaticFriction(0.3);
-    object1->m_material->setDynamicFriction(0.3);
-    object1->m_material->setTextureLevel(0.2);
-    object1->m_material->setHapticTriangleSides(true, false);
+//    // create normal map from texture data
+//    cNormalMapPtr normalMap1 = cNormalMap::create();
+//    normalMap1->createMap(object1->m_texture);
+//    object1->m_normalMap = normalMap1;
+//    normalMap1->setTextureUnit(GL_TEXTURE0_ARB);
 
-//     // set material of object
-//     cMaterial p;
-//     p.setGray();
-//     object1->setMaterial(p);
+//    // set haptic properties
+//    object1->m_material->setStiffness(.3 * maxStiffness);a
+//    object1->m_material->setStaticFriction(0.1);
+//    object1->m_material->setDynamicFriction(0.1);
+//    object1->m_material->setTextureLevel(1.0);
+//    object1->m_material->setHapticTriangleSides(true, false);
 
-//     // disable culling so that faces are rendered on both sides
-//     object1->setUseCulling(false);
+     // set material of object
+     cMaterial p;
+     p.setGray();
+     object1->setMaterial(p);
 
-//     // compute a boundary box
-//     object1->computeBoundaryBox(true);
+     // disable culling so that faces are rendered on both sides
+     object1->setUseCulling(false);
 
-//     // show/hide boundary box
-//     object1->setShowBoundaryBox(false);
+     // compute a boundary box
+     object1->computeBoundaryBox(true);
+
+     // show/hide boundary box
+     object1->setShowBoundaryBox(false);
 
     
 
-//     // center object in scene
-//     //object1->setLocalPos(-1.0 * object->getBoundaryCenter());
+     // center object in scene
+     //object1->setLocalPos(-1.0 * object->getBoundaryCenter());
 
-//     // compute all edges of object for which adjacent triangles have more than 40 degree angle
-//     object1->computeAllEdges(0);
+     // compute all edges of object for which adjacent triangles have more than 40 degree angle
+     object1->computeAllEdges(0);
 
-//     // set line width of edges and color
-// //    cColorf colorEdges;
-// //    colorEdges.setBlack();
-// //    object->setEdgeProperties(1, colorEdges);
+     // set line width of edges and color
+ //    cColorf colorEdges;
+ //    colorEdges.setBlack();
+ //    object->setEdgeProperties(1, colorEdges);
 
-//     // set normal properties for display
-// //    cColorf colorNormals;
-// //    colorNormals.setOrangeTomato();
-// //    object->setNormalsProperties(0.01, colorNormals);
+     // set normal properties for display
+ //    cColorf colorNormals;
+ //    colorNormals.setOrangeTomato();
+ //    object->setNormalsProperties(0.01, colorNormals);
 
-//     // set haptic properties
-//     object1->setStiffness(0.3 * maxStiffness);
-//     object1->setFriction(0.5, 0.5);
-//     // can add friction and texture
+     // set haptic properties
+     object1->setStiffness(0.3 * maxStiffness);
+     object1->setFriction(0.5, 0.1);
+     // can add friction and texture
 
-//     // display options
-//     object1->setShowTriangles(showTriangles);
-//     object1->setShowEdges(false);
-//     object1->setShowNormals(false);
+     // display options
+     object1->setShowTriangles(showTriangles);
+     object1->setShowEdges(false);
+     object1->setShowNormals(false);
 
 
     /////////////////////////////////////////////////////////////////////////
@@ -874,8 +876,8 @@ void updateHaptics(void)
         // compute interaction forces
         tool->computeInteractionForces();
 
+/*
 
-        /*
         /////////////////////////////////////////////////////////////////////////
         // MANIPULATION
         /////////////////////////////////////////////////////////////////////////
@@ -952,8 +954,8 @@ void updateHaptics(void)
         {
             state = IDLE;
         }
-        */
 
+*/
 
         /////////////////////////////////////////////////////////////////////////
         // FINALIZE
