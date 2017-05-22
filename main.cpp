@@ -346,7 +346,7 @@ int main(int argc, char* argv[])
     tool->setShowContactPoints(true, false);
 
     // create a white cursor
-    tool->m_hapticPoint->m_sphereProxy->m_material->setBlue();
+    tool->m_hapticPoint->m_sphereProxy->m_material->setBlueCadet();
 
     // map the physical workspace of the haptic device to a larger virtual workspace.
     tool->setWorkspaceRadius(0.25);
@@ -408,7 +408,7 @@ int main(int argc, char* argv[])
     cMaterial m;
     m.setWhite();
     object->setMaterial(m);
-    //object->setTransparencyLevel(0.1);
+    // object->setTransparencyLevel(0.5);
 
     // disable culling so that faces are rendered on both sides
     object->setUseCulling(false);
@@ -442,7 +442,7 @@ int main(int argc, char* argv[])
     object->setNormalsProperties(0.01, colorNormals);
 
     // set haptic properties
-    object->setStiffness(0.9*maxStiffness);
+    object->setStiffness(0.3*maxStiffness);
     // can add friction and texture
 
     // display options
@@ -513,8 +513,8 @@ int main(int argc, char* argv[])
 //    object->setNormalsProperties(0.01, colorNormals);
 
     // set haptic properties
-    object1->setStiffness(0.9* maxStiffness);
-    object1->setFriction(3.5, 0.0);
+    object1->setStiffness(0.3 * maxStiffness);
+    object1->setFriction(0.5, 0.5);
     // can add friction and texture
 
     // display options
@@ -570,10 +570,10 @@ int main(int argc, char* argv[])
     object2->m_normalMap = normalMap2;
 
     // set haptic properties
-    object2->m_material->setStiffness(0.4 * maxStiffness);
+    object2->m_material->setStiffness(0.2 * maxStiffness);
     object2->m_material->setStaticFriction(0.2);
     object2->m_material->setDynamicFriction(0.2);
-    object2->m_material->setTextureLevel(0.2);
+    object2->m_material->setTextureLevel(0.075);
     object2->m_material->setHapticTriangleSides(true, false);
 
     //--------------------------------------------------------------------------
@@ -939,7 +939,7 @@ void updateHaptics(void)
         // send forces to haptic device
         //tool->applyToDevice();
         cVector3d computedForce = tool->getDeviceGlobalForce();
-        computedForce += cVector3d(0,0,-3.0);
+        computedForce += cVector3d(0,0,-.5);
         hapticDevice->setForce(computedForce);
 
     }
