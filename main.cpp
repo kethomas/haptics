@@ -349,7 +349,7 @@ int main(int argc, char* argv[])
     tool->m_hapticPoint->m_sphereProxy->m_material->setBlueCadet();
 
     // map the physical workspace of the haptic device to a larger virtual workspace.
-    tool->setWorkspaceRadius(0.3);
+    tool->setWorkspaceRadius(0.25);
 
     // oriente tool with camera
     tool->setLocalRot(camera->getLocalRot());
@@ -787,11 +787,8 @@ void updateGraphics(void)
     // update position of label
     labelRates->setLocalPos((int)(0.5 * (width - labelRates->getWidth())), 15);
 
-    // cVector3d* pos;
-    // pos = &(tool->m_hapticPoint->getGlobalPosProxy());
-
     buildingLabel->setText("Nymble");
-    buildingLabel->setLocalPos(255,285,0);
+    buildingLabel->setLocalPos((int)(.27 * width), (int)(.48 * height));
 
     buildingLabel2->setText("Entre");
     buildingLabel2->setLocalPos(400,175,0);
