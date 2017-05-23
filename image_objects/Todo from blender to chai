@@ -1,5 +1,12 @@
 Check direction of normals in blender (they might be inside out when exported into chai and mesh)
 
-In meshlab, scale to a size about 0.5.
+Scale 0.0001
+
+scale up by 2
+
+In meshlab, scale to a size about 0.6.
 
 In meshlab, Flip axis: Swap Y-Z, flip X
+
+Rotate along Z-axis by -79,2
+

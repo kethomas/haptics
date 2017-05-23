@@ -64,7 +64,7 @@ cToolCursor* tool;
 cMultiMesh* object;
 cMultiMesh* object1;
 cMesh* object2;
-cMesh* object3;
+cMultiMesh* object3;
 
 // a colored background
 cBackground* background;
@@ -273,7 +273,7 @@ int main(int argc, char* argv[])
     world->addChild(camera);
 
     // position and orient the camera
-    camera->set(cVector3d(0.7, 0.0, 0.2),    // camera position (eye)
+    camera->set(cVector3d(0.7, 0.0, 0.2),    // SET Z TO 0.2!!!! camera position (eye)
                 cVector3d(0.0, 0.0, 0.0),    // lookat position (target)
                 cVector3d(0.0, 0.0, 1.0));   // direction of the (up) vector
 
@@ -346,10 +346,10 @@ int main(int argc, char* argv[])
     tool->setShowContactPoints(true, false);
 
     // create a white cursor
-    tool->m_hapticPoint->m_sphereProxy->m_material->setBlue();
+    tool->m_hapticPoint->m_sphereProxy->m_material->setBlueCadet();
 
     // map the physical workspace of the haptic device to a larger virtual workspace.
-    tool->setWorkspaceRadius(0.25);
+    tool->setWorkspaceRadius(0.3);
 
     // oriente tool with camera
     tool->setLocalRot(camera->getLocalRot());
@@ -385,18 +385,9 @@ int main(int argc, char* argv[])
     // add object to world
     world->addChild(object);
 
-    // set the position of the object
-    object->setLocalPos(0, 0, 0);
-
     // set graphic properties
     bool fileload;
     fileload = object->loadFromFile("image_objects/kth_campus.obj");
-    if (!fileload)
-    {
-        #if defined(_MSVC)
-        fileload = object->loadFromFile("image_objects/kth_campus_with_arches.obj");
-        #endif
-    }
     if (!fileload)
     {
         cout << "Error -  image failed to load correctly." << endl;
@@ -408,6 +399,7 @@ int main(int argc, char* argv[])
     cMaterial m;
     m.setWhite();
     object->setMaterial(m);
+    // object->setTransparencyLevel(0.8);
 
     // disable culling so that faces are rendered on both sides
     object->setUseCulling(false);
@@ -424,8 +416,7 @@ int main(int argc, char* argv[])
     // center object in scene
     object->setLocalPos(-1.0 * object->getBoundaryCenter());
     std::cout <<"Position: "<< object->getLocalPos() << std::endl;
-    object->setLocalPos(0, 0, 0.05);
-
+    object->setLocalPos(0.05, 0, 0.05);
 
     // compute all edges of object for which adjacent triangles have more than 40 degree angle
     object->computeAllEdges(0);
@@ -441,8 +432,7 @@ int main(int argc, char* argv[])
     object->setNormalsProperties(0.01, colorNormals);
 
     // set haptic properties
-    object->setStiffness(0.9*maxStiffness);
-    // can add friction and texture
+    object->setStiffness(0.3*maxStiffness);
 
     // display options
     object->setShowTriangles(showTriangles);
@@ -463,20 +453,16 @@ int main(int argc, char* argv[])
     object1->setLocalPos(0, 0, 0.05);
 
     // set graphic properties
-    // bool fileload;
     fileload = object1->loadFromFile("image_objects/kth_campus_plane.obj");
-    if (!fileload)
-    {
-        #if defined(_MSVC)
-        fileload = object1->loadFromFile("image_objects/kth_campus_plane.obj");
-        #endif
-    }
     if (!fileload)
     {
         cout << "Error -  image failed to load correctly." << endl;
         close();
         return (-1);
     }
+
+    // create collision detector
+    object1->createAABBCollisionDetector(toolRadius);
 
     // set material of object
     cMaterial p;
@@ -492,29 +478,15 @@ int main(int argc, char* argv[])
     // show/hide boundary box
     object1->setShowBoundaryBox(false);
 
-    // create collision detector
-    object1->createAABBCollisionDetector(toolRadius);
-
     // center object in scene
     //object1->setLocalPos(-1.0 * object->getBoundaryCenter());
 
     // compute all edges of object for which adjacent triangles have more than 40 degree angle
     object1->computeAllEdges(0);
 
-    // set line width of edges and color
-//    cColorf colorEdges;
-//    colorEdges.setBlack();
-//    object->setEdgeProperties(1, colorEdges);
-
-    // set normal properties for display
-//    cColorf colorNormals;
-//    colorNormals.setOrangeTomato();
-//    object->setNormalsProperties(0.01, colorNormals);
-
     // set haptic properties
-    object1->setStiffness(0.9* maxStiffness);
-    object1->setFriction(3.5, 0.0);
-    // can add friction and texture
+    object1->setStiffness(0.3 * maxStiffness);
+    object1->setFriction(0.5, 0.1);
 
     // display options
     object1->setShowTriangles(showTriangles);
@@ -530,7 +502,7 @@ int main(int argc, char* argv[])
     object2 = new cMesh();
 
     // create plane
-    cCreatePlane(object2, 0.1, 0.1);
+    cCreatePlane(object2, 0.19, 0.14);
 
     // create collision detector
     object2->createAABBCollisionDetector(toolRadius);
@@ -539,17 +511,13 @@ int main(int argc, char* argv[])
     world->addChild(object2);
 
     // set the position of the object
-    object2->setLocalPos(0.2, 0.2, 0.0);
+    object2->setLocalPos(-0.02, 0.15, 0.0501);
+
+    object2->rotateAboutLocalAxisDeg (0,0,1,-20);
 
     // set graphic properties
     object2->m_texture = cTexture2d::create();
-    fileload = object2->m_texture->loadFromFile(RESOURCE_PATH("image_objects/grass.jpg"));
-    if (!fileload)
-    {
-        #if defined(_MSVC)
-        fileload = object2->m_texture->loadFromFile("image_objects/grass.jpg");
-        #endif
-    }
+    fileload = object2->m_texture->loadFromFile("image_objects/grass.jpg");
     if (!fileload)
     {
         cout << "Error - Texture image failed to load correctly." << endl;
@@ -567,11 +535,58 @@ int main(int argc, char* argv[])
     object2->m_normalMap = normalMap2;
 
     // set haptic properties
-    object2->m_material->setStiffness(0.4 * maxStiffness);
+    object2->m_material->setStiffness(0.2 * maxStiffness);
     object2->m_material->setStaticFriction(0.2);
     object2->m_material->setDynamicFriction(0.2);
-    object2->m_material->setTextureLevel(0.2);
+    object2->m_material->setTextureLevel(0.075);
     object2->m_material->setHapticTriangleSides(true, false);
+
+
+    /////////////////////////////////////////////////////////////////////////
+    // OBJECT 3: Beacon - Thea, Linnéa, Kirsten
+    ////////////////////////////////////////////////////////////////////////
+
+    // create a multimesh
+    object3 = new cMultiMesh();
+
+    // add object to world
+    world->addChild(object3);
+
+    // set the position of the object
+    object3->setLocalPos(0.16, -.16, 0.055);
+
+    // set graphic properties
+    fileload = object3->loadFromFile("image_objects/beacon.obj");
+    if (!fileload)
+    {
+        cout << "Error -  image failed to load correctly." << endl;
+        close();
+        return (-1);
+    }
+
+    // create collision detector
+    object3->createAABBCollisionDetector(toolRadius);
+
+    // disable culling so that faces are rendered on both sides
+    object3->setUseCulling(false);
+
+    // compute a boundary box
+    object3->computeBoundaryBox(true);
+
+    // show/hide boundary box
+    object3->setShowBoundaryBox(false);
+
+    // compute all edges of object for which adjacent triangles have more than 40 degree angle
+    object3->computeAllEdges(0);
+
+    // set haptic properties
+    object3->setStiffness(0.005 * maxStiffness);
+
+    // display options
+    object3->setShowTriangles(showTriangles);
+    object3->setShowEdges(false);
+    object3->setShowNormals(false);
+
 
     //--------------------------------------------------------------------------
     // WIDGETS
@@ -587,8 +602,8 @@ int main(int argc, char* argv[])
 
 
     buildingLabel = new cLabel(font);
-    buildingLabel->m_fontColor.setWhite();
-    // camera->m_frontLayer->addChild(buildingLabel);
+    buildingLabel->m_fontColor.setGrayLight();
+    camera->m_frontLayer->addChild(buildingLabel);
 
     buildingLabel2 = new cLabel(font);
     buildingLabel2->m_fontColor.setWhite();
@@ -776,7 +791,7 @@ void updateGraphics(void)
     // pos = &(tool->m_hapticPoint->getGlobalPosProxy());
 
     buildingLabel->setText("Nymble");
-    buildingLabel->setLocalPos(200,205,0);
+    buildingLabel->setLocalPos(255,285,0);
 
     buildingLabel2->setText("Entre");
     buildingLabel2->setLocalPos(400,175,0);
@@ -848,8 +863,8 @@ void updateHaptics(void)
         // compute interaction forces
         tool->computeInteractionForces();
 
+/*
 
-        /*
         /////////////////////////////////////////////////////////////////////////
         // MANIPULATION
         /////////////////////////////////////////////////////////////////////////
@@ -926,8 +941,8 @@ void updateHaptics(void)
         {
             state = IDLE;
         }
-        */
 
+*/
 
         /////////////////////////////////////////////////////////////////////////
         // FINALIZE
@@ -936,7 +951,7 @@ void updateHaptics(void)
         // send forces to haptic device
         //tool->applyToDevice();
         cVector3d computedForce = tool->getDeviceGlobalForce();
-        computedForce += cVector3d(0,0,-3.0);
+        computedForce += cVector3d(0,0,-.5);
         hapticDevice->setForce(computedForce);
 
     }
